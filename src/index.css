@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  --font-horror: "Creepster", system-ui, sans-serif;
+  --color-ff-red: #d32f2f;
+  --color-ff-dark: #121212;
+  --color-ff-panel: #1e1e1e;
+  --color-ff-border: #333333;
+}
+
+body {
+  background-color: var(--color-ff-dark);
+  color: #ffffff;
+}

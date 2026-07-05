@@ -1,0 +1,6 @@
+{
+  "name": "YoSensi 4X",
+  "description": "Garena Free Fire sensitivity and settings optimization tool powered by AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
