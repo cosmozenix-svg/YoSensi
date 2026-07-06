@@ -3,8 +3,6 @@ import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI, Type, Schema } from '@google/genai';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
 async function startServer() {
   const app = express();
   const PORT = 3000;
@@ -13,6 +11,12 @@ async function startServer() {
 
   app.post('/api/settings', async (req, res) => {
     try {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        return res.status(500).json({ error: 'GEMINI_API_KEY is not configured on the server.' });
+      }
+      
+      const ai = new GoogleGenAI({ apiKey });
       const { brand, model, rooted, dpi } = req.body;
 
       if (!brand || !model || !rooted || !dpi) {
