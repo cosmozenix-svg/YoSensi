@@ -57,14 +57,31 @@ Return the settings matching this exact JSON schema.
         required: ["graphics", "fps", "sensitivity"]
       };
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: responseSchema,
+      const generateWithRetry = async (promptText: string, schema: any) => {
+        const models = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'];
+        let lastError: any = null;
+        
+        for (const modelName of models) {
+          try {
+            console.log(`Trying model ${modelName}...`);
+            const response = await ai.models.generateContent({
+              model: modelName,
+              contents: promptText,
+              config: {
+                responseMimeType: "application/json",
+                responseSchema: schema,
+              }
+            });
+            return response;
+          } catch (error: any) {
+            console.error(`Model ${modelName} failed:`, error?.message || error);
+            lastError = error;
+          }
         }
-      });
+        throw lastError;
+      };
+
+      const response = await generateWithRetry(prompt, responseSchema);
 
       const text = response.text;
       if (!text) {
