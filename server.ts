@@ -75,6 +75,37 @@ Return the settings matching this exact JSON schema.
     }
   });
 
+  app.post('/api/feedback', async (req, res) => {
+    try {
+      const { rating, settings, brand, model } = req.body;
+      const feedbackEntry = {
+        timestamp: new Date().toISOString(),
+        rating,
+        settings,
+        brand,
+        model
+      };
+      
+      const fs = await import('fs/promises');
+      const feedbackFile = path.join(process.cwd(), 'feedback.json');
+      let currentFeedback = [];
+      try {
+        const fileData = await fs.readFile(feedbackFile, 'utf-8');
+        currentFeedback = JSON.parse(fileData);
+      } catch (err) {
+        // Ignore if file doesn't exist
+      }
+      
+      currentFeedback.push(feedbackEntry);
+      await fs.writeFile(feedbackFile, JSON.stringify(currentFeedback, null, 2));
+      
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error('Error saving feedback:', error);
+      res.status(500).json({ error: error.message || 'Failed to save feedback.' });
+    }
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
